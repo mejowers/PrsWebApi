@@ -90,5 +90,13 @@ namespace PrsWebApi.Controllers {
         private bool RequestExists(int id) {
             return _context.Requests.Any(e => e.Id == id);
         }
+        // put: change record without calling id number
+        [HttpPut]
+        public async Task<IActionResult> PutRequest(Request request) {
+            _context.Entry(request).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
