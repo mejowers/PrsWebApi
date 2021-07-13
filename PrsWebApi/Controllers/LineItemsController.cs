@@ -62,6 +62,7 @@ namespace PrsWebApi.Controllers {
                     throw;
                 }
             }
+            await RecalculateTotal(lineItem.RequestId);
 
             return NoContent();
         }
@@ -73,7 +74,7 @@ namespace PrsWebApi.Controllers {
         public async Task<ActionResult<LineItem>> PostLineItem(LineItem lineItem) {
             _context.LineItems.Add(lineItem);
             await _context.SaveChangesAsync();
-
+            await RecalculateTotal(lineItem.RequestId);
 
             return CreatedAtAction("GetLineItem", new { id = lineItem.Id }, lineItem);
         }
@@ -88,6 +89,7 @@ namespace PrsWebApi.Controllers {
 
             _context.LineItems.Remove(lineItem);
             await _context.SaveChangesAsync();
+            await RecalculateTotal(lineItem.RequestId);
 
             return lineItem;
         }
@@ -96,15 +98,15 @@ namespace PrsWebApi.Controllers {
             return _context.LineItems.Any(e => e.Id == id);
         }
 
-        public async Task RecalculateRequestTotal(int reqId) {
-            var request = await _context.Requests.FindAsync(reqId);
+        public async Task RecalculateTotal(int requestId) {
+            var request = await _context.Requests.FindAsync(requestId);
             request.Total = (from l in _context.LineItems
                              join p in _context.Products on l.ProductId equals p.Id
-                             where l.RequestId == reqId
-                             select new { LineTotal = l.Quantity * p.Price })
-                             .Sum(x => x.LineTotal);
+                             where l.RequestId == requestId
+                             select new { Total = l.Quantity * p.Price })
+                             .Sum(x => x.Total);
             var rc = await _context.SaveChangesAsync();
-            if (rc != 1) throw new Exception("Fatal Error: did not calculate. ");
-        } 
+            if (rc != 1) throw new Exception("Fatal Error: Did not calculate.");
+        }
     }
 }
