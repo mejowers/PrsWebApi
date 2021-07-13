@@ -65,8 +65,8 @@ namespace PrsWebApi.Controllers {
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public async Task<ActionResult<Request>> PostRequest(Request request) {
-            request.Status.Equals("new");
-            request.SubmittedDate.Equals(DateTime.Now);
+            request.Status = "new";
+            request.SubmittedDate = DateTime.Now;
                 _context.Requests.Add(request);
            await _context.SaveChangesAsync();
 
