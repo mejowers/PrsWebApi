@@ -36,6 +36,13 @@ namespace PrsWebApi.Controllers {
             return request;
         }
 
+        // GET: api/Requests
+        [HttpGet("list-review/{id}")]
+        public async Task<ActionResult<IEnumerable<Request>>> GetRequestByStatus(int id) {
+            return await _context.Requests.Where(req =>  req.Status=="review" && req.UserId != id)
+                                          .ToListAsync();
+        }
+
         // PUT: api/Requests/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -60,6 +67,21 @@ namespace PrsWebApi.Controllers {
             return NoContent();
         }
 
+        // submit a change for the request approve if < 50.00 otherwise set to 'review'
+        [HttpPut("submit-review/{id}")]
+        public async Task<IActionResult> PutRequestReview(int id, Request request) {
+
+            if (request.Total <= 50) {
+                request.Status = "Approve";
+            } else { request.Status = "Review"; }
+            request.SubmittedDate = DateTime.Now;
+
+            _context.Entry(request).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
         // POST: api/Requests
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
@@ -67,10 +89,10 @@ namespace PrsWebApi.Controllers {
         public async Task<ActionResult<Request>> PostRequest(Request request) {
             request.Status = "new";
             request.SubmittedDate = DateTime.Now;
-                _context.Requests.Add(request);
-           await _context.SaveChangesAsync();
+            _context.Requests.Add(request);
+            await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetRequest", new { id = request.Id}, request);
+            return CreatedAtAction("GetRequest", new { id = request.Id }, request);
         }
 
         // DELETE: api/Requests/5
@@ -97,6 +119,26 @@ namespace PrsWebApi.Controllers {
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+        [HttpPut("approve")]
+        public async Task<ActionResult<Request>> PutRequestApprove(Request request) {
+
+            request.Status = "Approved";
+
+            _context.Entry(request).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return request;
+        }
+        [HttpPut("reject")]
+        public async Task<ActionResult<Request>> PutRequestReject(Request request) {
+
+            request.Status = "Rejected";
+
+            _context.Entry(request).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return request;
         }
     }
 }
