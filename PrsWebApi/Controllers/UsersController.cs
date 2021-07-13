@@ -94,8 +94,8 @@ namespace PrsWebApi.Controllers
         [HttpPost("{login}")]
         public async Task<ActionResult<User>> GetByUserNamePassword(User user) {
             var login = await _context.Users
-                                      .SingleOrDefaultAsync
-                                      (u => u.Username == user.Username && u.Password == user.Password);
+                    .SingleOrDefaultAsync(u => u.Username == user.Username && u.Password == user.Password);
+
 
             if (login == null) {
                 return NotFound();
