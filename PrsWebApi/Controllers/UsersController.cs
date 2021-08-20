@@ -71,7 +71,7 @@ namespace PrsWebApi.Controllers
 
             return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
-
+        
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<User>> DeleteUser(int id) {
@@ -90,18 +90,17 @@ namespace PrsWebApi.Controllers
             return _context.Users.Any(e => e.Id == id);
         }
 
-        // Post: login with username and password
-        [HttpPost("{login}")]
+        // Get: login with username and password
+        [HttpGet("{login}")]
         public async Task<ActionResult<User>> GetByUserNamePassword(User user) {
             var login = await _context.Users
-                    .SingleOrDefaultAsync(u => u.Username == user.Username && u.Password == user.Password);
-
+                    .SingleOrDefaultAsync(u => u.Username == user.Username && 
+                    u.Password == user.Password);
 
             if (login == null) {
                 return NotFound();
             }
             return login;
-
         }
 
         //Put: update user without passing Id
