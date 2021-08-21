@@ -21,13 +21,14 @@ namespace PrsWebApi.Controllers {
         // GET: api/Requests
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequest() {
-            return await _context.Requests.ToListAsync();
+            return await _context.Requests.Include(r => r.user).ToListAsync();
         }
 
         // GET: api/Requests/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Request>> GetRequest(int id) {
-            var request = await _context.Requests.FindAsync(id);
+            var request = await _context.Requests.Include(r => r.user)
+                .SingleOrDefaultAsync(r=>r.Id==id);
 
             if (request == null) {
                 return NotFound();
@@ -40,7 +41,7 @@ namespace PrsWebApi.Controllers {
         [HttpGet("list-review/{id}")]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequestByStatus(int id) {
             return await _context.Requests.Where(req =>  req.Status=="review" && req.UserId != id)
-                                          .ToListAsync();
+                .Include(r => r.user).ToListAsync();
         }
 
         // PUT: api/Requests/5

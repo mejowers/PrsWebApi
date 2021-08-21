@@ -9,7 +9,7 @@ using PrsWebApi.Data;
 using PrsWebApi.Models;
 
 namespace PrsWebApi.Controllers {
-    [Route("api/[controller]")]
+    [Route("api/line-items")]
     [ApiController]
     public class LineItemsController : ControllerBase {
         private readonly AppDbContext _context;
@@ -21,13 +21,14 @@ namespace PrsWebApi.Controllers {
         // GET: api/LineItems
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LineItem>>> GetLineItems() {
-            return await _context.LineItems.ToListAsync();
+            return await _context.LineItems.Include(ri=>ri.product).ToListAsync();
         }
 
         // GET: api/LineItems/5
         [HttpGet("{id}")]
         public async Task<ActionResult<LineItem>> GetLineItem(int id) {
-            var lineItem = await _context.LineItems.FindAsync(id);
+            var lineItem = await _context.LineItems.Include(ri => ri.product).ThenInclude(r => r.vendor)
+                 .SingleOrDefaultAsync(r => r.Id == id); ;
 
             if (lineItem == null) {
                 return NotFound();

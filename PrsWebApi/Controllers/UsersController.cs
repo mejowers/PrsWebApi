@@ -90,9 +90,9 @@ namespace PrsWebApi.Controllers
             return _context.Users.Any(e => e.Id == id);
         }
 
-        // Get: login with username and password
-        [HttpGet("{login}")]
-        public async Task<ActionResult<User>> GetByUserNamePassword(User user) {
+        // Post: login with username and password
+        [HttpPost("login")]
+        public async Task<ActionResult<User>> GetByUserNamePassword(LoginView user) {
             var login = await _context.Users
                     .SingleOrDefaultAsync(u => u.Username == user.Username && 
                     u.Password == user.Password);
