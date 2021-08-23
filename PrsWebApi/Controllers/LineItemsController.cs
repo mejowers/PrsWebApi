@@ -40,7 +40,7 @@ namespace PrsWebApi.Controllers {
         // GET: api/LineItems/Lines-for-pr/{Id}
         [HttpGet("lines-for-pr/{id}")]
         public async Task<ActionResult<IEnumerable<LineItem>>> GetAllByRequest(int id) {
-            return await _context.LineItems.Where(li => li.RequestId == id).ToListAsync();
+            return await _context.LineItems.Where(li => li.RequestId == id).Include(li=>li.product.vendor).ToListAsync();
         }
 
         // PUT: api/LineItems/5

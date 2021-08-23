@@ -38,7 +38,7 @@ namespace PrsWebApi.Controllers {
         }
 
         // GET: api/Requests
-        [HttpGet("list-review/{id}")]
+        [HttpGet("request-lines/{id}")]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequestByStatus(int id) {
             return await _context.Requests.Where(req =>  req.Status=="review" && req.UserId != id)
                 .Include(r => r.user).ToListAsync();
