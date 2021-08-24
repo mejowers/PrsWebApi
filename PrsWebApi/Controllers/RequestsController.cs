@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PrsWebApi.Data;
 using PrsWebApi.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PrsWebApi.Controllers {
     [Route("api/[controller]")]
@@ -28,7 +27,7 @@ namespace PrsWebApi.Controllers {
         [HttpGet("{id}")]
         public async Task<ActionResult<Request>> GetRequest(int id) {
             var request = await _context.Requests.Include(r => r.user)
-                .SingleOrDefaultAsync(r=>r.Id==id);
+                .SingleOrDefaultAsync(r => r.Id == id);
 
             if (request == null) {
                 return NotFound();
@@ -40,7 +39,7 @@ namespace PrsWebApi.Controllers {
         // GET: api/Requests
         [HttpGet("request-lines/{id}")]
         public async Task<ActionResult<IEnumerable<Request>>> GetRequestByStatus(int id) {
-            return await _context.Requests.Where(req =>  req.Status=="review" && req.UserId != id)
+            return await _context.Requests.Where(req => req.Status == "review" && req.UserId != id)
                 .Include(r => r.user).ToListAsync();
         }
 
